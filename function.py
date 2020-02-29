@@ -5,8 +5,8 @@ import requests as req
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
                              'AppleWebKit/537.36 (KHTML, like Gecko) '
                              'Chrome/39.0.2171.95 Safari/537.36'}
-Word = 'Привет'
-SiteURL = 'https://www.bukvarix.com/'
+sWord = 'Привет'
+sSiteURL = 'https://www.bukvarix.com/'
 
 
 #Проверка доступности сайта. Если сервер возвращает 200,то сайт доступен
@@ -25,7 +25,9 @@ def getPage(url,headers):
     htmlcode = html.text
     return htmlcode
 
-
+def createRequest(word,url):
+    requestUrl = 'https://www.bukvarix.com/keywords/?q=' + word
+    return requestUrl
 
 # def SearchWord(Word):
-#     hello=hello
+#     hello = hello
