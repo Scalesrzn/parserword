@@ -1,8 +1,10 @@
 import tkinter
+import main
 import sys
 from tkinter import *
 from tkinter import Tk, Frame, BOTH
 from ttk import Frame, Button, Style
+import function
 # class Table():
 
 class Interface(Frame):
@@ -23,7 +25,12 @@ class Interface(Frame):
             value = Keyword.get()
             TextLog.delete(1.0, END)
             TextLog.insert(1.0,"Вы ввели: " + value)
+            return value
         
+        def getValueButton():
+            val = function.createRequest(str(inputValue()),main.sSiteURL)
+            print(val)
+
         self.parent.title("Парсер")
         self.style = Style()
         self.style.theme_use("default")
@@ -38,14 +45,15 @@ class Interface(Frame):
         self.parent.geometry('%dx%d+%d+%d' % (w, h, x, y)) 
         # Располагаем объекты на форме
         
+
+        
         # Объявляем все элементы:
         KeywordLabel = Label(text="Введите имя:")
         Keyword = Entry()
         Close = Button(text="Закрыть", command = closeForm)
-        Parse = Button(text = 'Начать парсинг')
+        Parse = Button(text = 'Начать парсинг', command = getValueButton)
         TextLog = Text(width=25, height=5)
         SaveValue = Button(text = "Сохранить параметры парсинга", command = inputValue )
-        
         # Размещаем элементы
         KeywordLabel.grid(row = 0, column = 0, sticky="w")
         Keyword.grid(row = 0,column = 1, padx = 5, pady = 5)
