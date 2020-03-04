@@ -8,6 +8,7 @@ import function
 # class Table():
 
 class Interface(Frame):
+
     def __init__(self, parent):
         Frame.__init__(self, parent)   
         self.parent = parent
@@ -15,6 +16,10 @@ class Interface(Frame):
     
     # Инициализация интерфейса
     def initUI(self):
+        #Headers - заголовок запроса
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
+                             'AppleWebKit/537.36 (KHTML, like Gecko) '
+                             'Chrome/39.0.2171.95 Safari/537.36'}
         
         # Закрытие формы
         def closeForm():  
@@ -29,7 +34,11 @@ class Interface(Frame):
         
         def getValueButton():
             val = function.createRequest(str(inputValue()),main.sSiteURL)
-            print(val)
+            print("Сгенерированный HTTP запрос: " + val)
+            response = function.getPage(val,headers)
+            TextLog.insert(1.0,"Ответ " + response)
+        
+            
 
         self.parent.title("Парсер")
         self.style = Style()
@@ -37,7 +46,7 @@ class Interface(Frame):
 
         #Задаем размеры формы
         w = 600
-        h = 500
+        h = 800
         sw = self.parent.winfo_screenwidth()
         sh = self.parent.winfo_screenheight()
         x = (sw - w)/2
@@ -52,15 +61,15 @@ class Interface(Frame):
         Keyword = Entry()
         Close = Button(text="Закрыть", command = closeForm)
         Parse = Button(text = 'Начать парсинг', command = getValueButton)
-        TextLog = Text(width=25, height=5)
+        TextLog = Text(width=100, height=50)
         SaveValue = Button(text = "Сохранить параметры парсинга", command = inputValue )
         # Размещаем элементы
         KeywordLabel.grid(row = 0, column = 0, sticky="w")
         Keyword.grid(row = 0,column = 1, padx = 5, pady = 5)
         TextLog.grid(row = 2, column = 1)
-        SaveValue.grid(row = 2, column = 2)
-        Parse.grid(row = 3, column = 2)
-        Close.grid(row = 4,column = 2 )
+        SaveValue.grid(row = 0, column = 2)
+        Parse.grid(row = 1, column = 2)
+        Close.grid(row = 2,column = 2 )
         
         
 

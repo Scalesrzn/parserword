@@ -16,8 +16,5 @@ def main():
     UI.Interface(root) #Создаем объект класса Interface
     root.mainloop() 
 
-
-print(function.createRequest(sWord,sSiteURL))
-
 if __name__ == '__main__':
     main()
