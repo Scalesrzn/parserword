@@ -1,6 +1,8 @@
 import tkinter
 import main
 import sys
+from lxml import etree 
+import lxml.html as ht
 from tkinter import *
 from tkinter import Tk, Frame, BOTH
 from ttk import Frame, Button, Style
@@ -32,11 +34,21 @@ class Interface(Frame):
             TextLog.insert(1.0,"Вы ввели: " + value)
             return value
         
+        #Получаем ответ от сервера в виде HTML документа
         def getValueButton():
             val = function.createRequest(str(inputValue()),main.sSiteURL)
             print("Сгенерированный HTTP запрос: " + val)
             response = function.getPage(val,headers)
             TextLog.insert(1.0,"Ответ " + response)
+            xPathResponse(response)
+
+        def xPathResponse(response):
+            DOM = etree.parse(response)
+            sString = DOM.xpath('/tr/td')
+            print(sString)
+            for l in sString:
+                TextResult.insert(1.0, l.get( 'href' )) 
+  
         
             
 
@@ -61,15 +73,17 @@ class Interface(Frame):
         Keyword = Entry()
         Close = Button(text="Закрыть", command = closeForm)
         Parse = Button(text = 'Начать парсинг', command = getValueButton)
-        TextLog = Text(width=100, height=50)
+        TextLog = Text(width=50, height=50)
+        TextResult = Text(width=50, height=50)
         SaveValue = Button(text = "Сохранить параметры парсинга", command = inputValue )
         # Размещаем элементы
         KeywordLabel.grid(row = 0, column = 0, sticky="w")
         Keyword.grid(row = 0,column = 1, padx = 5, pady = 5)
-        TextLog.grid(row = 2, column = 1)
-        SaveValue.grid(row = 0, column = 2)
-        Parse.grid(row = 1, column = 2)
-        Close.grid(row = 2,column = 2 )
+        SaveValue.grid(row = 0, column = 3)
+        TextLog.grid(row = 1, column = 1)
+        TextResult.grid(row = 1, column = 2)
+        Parse.grid(row = 1, column = 3)
+        Close.grid(row = 2,column = 3 )
         
         
 
