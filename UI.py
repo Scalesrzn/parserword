@@ -43,11 +43,14 @@ class Interface(Frame):
             xPathResponse(response)
 
         def xPathResponse(response):
-            DOM = etree.parse(response)
-            sString = DOM.xpath('/tr/td')
-            print(sString)
-            for l in sString:
-                TextResult.insert(1.0, l.get( 'href' )) 
+            
+            # DOM = etree.parse(response)
+            # sString = DOM.xpath('/tr/td')
+            # print("LOL" + sString)
+            # for l in sString:
+            #     TextResult.insert(1.0, l.get( 'href' )) 
+            TextResult.insert(1.0, re.findall("\"data\"*\]\]", response))
+            print(re.findall('\"data\"*\[*\]*', response))
   
         
             
@@ -57,8 +60,8 @@ class Interface(Frame):
         self.style.theme_use("default")
 
         #Задаем размеры формы
-        w = 600
-        h = 800
+        w = 500
+        h = 500
         sw = self.parent.winfo_screenwidth()
         sh = self.parent.winfo_screenheight()
         x = (sw - w)/2
@@ -73,8 +76,8 @@ class Interface(Frame):
         Keyword = Entry()
         Close = Button(text="Закрыть", command = closeForm)
         Parse = Button(text = 'Начать парсинг', command = getValueButton)
-        TextLog = Text(width=50, height=50)
-        TextResult = Text(width=50, height=50)
+        TextLog = Text(width=50, height=20)
+        TextResult = Text(width=50, height=20)
         SaveValue = Button(text = "Сохранить параметры парсинга", command = inputValue )
         # Размещаем элементы
         KeywordLabel.grid(row = 0, column = 0, sticky="w")
