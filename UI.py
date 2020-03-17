@@ -43,14 +43,10 @@ class Interface(Frame):
             xPathResponse(response)
 
         def xPathResponse(response):
-            
-            # DOM = etree.parse(response)
-            # sString = DOM.xpath('/tr/td')
-            # print("LOL" + sString)
-            # for l in sString:
-            #     TextResult.insert(1.0, l.get( 'href' )) 
-            TextResult.insert(1.0, re.findall("\"data\"*\]\]", response))
-            print(re.findall('\"data\"*\[*\]*', response))
+            responsekeywordirt = re.findall(r'\[\".*\d\]', response)
+            aResponse = re.split(r",\[",responsekeywordirt[0])
+            TextResult.insert(1.0, aResponse)
+            print(aResponse)
   
         
             
