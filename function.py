@@ -1,4 +1,5 @@
 import requests as req
+import xlrd, xlwt
 #Word - слова для поиска
 #SiteURL - Адрес сайта
 
@@ -26,5 +27,6 @@ def createRequest(word,url):
     requestUrl = 'https://www.bukvarix.com/keywords/?q=' + word
     return requestUrl
 
-# def SearchWord(Word):
-#     hello = hello
+def createEXCEL():
+    wb = xlwt.Workbook()
+    ws = wb.add_sheet('Keyword')

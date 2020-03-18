@@ -43,10 +43,14 @@ class Interface(Frame):
             xPathResponse(response)
 
         def xPathResponse(response):
-            responsekeywordirt = re.findall(r'\[\".*\d\]', response)
-            aResponse = re.split(r",\[",responsekeywordirt[0])
-            TextResult.insert(1.0, aResponse)
-            print(aResponse)
+            #Разделяем полученную строку на список и убираем []
+            aClearResponse = []
+            aResponse = re.split(r",\[",re.findall(r'\[\".*\d\]', response)[0])
+            print(len(aResponse))
+            for i in range(len(aResponse)):
+                aClearResponse.append(re.sub(r'[\]\[]','',aResponse[i])) 
+                TextResult.insert(1.0, re.sub(r'[\]\[]','',aClearResponse[i]) + '\n')
+                print(aClearResponse)
   
         
             
