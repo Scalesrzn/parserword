@@ -79,6 +79,7 @@ class Interface(Frame):
         TextLog = Text(width=50, height=20)
         TextResult = Text(width=50, height=20)
         SaveValue = Button(text = "Сохранить параметры парсинга", command = inputValue )
+        SaveExcel = Button(text = 'Сохранить в EXCEL документ', command = saveExcel )
         # Размещаем элементы
         KeywordLabel.grid(row = 0, column = 0, sticky="w")
         Keyword.grid(row = 0,column = 1, padx = 5, pady = 5)
