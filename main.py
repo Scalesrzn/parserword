@@ -12,9 +12,9 @@ sSiteURL = 'https://www.bukvarix.com/'
 
 def main():
     root = Tk()
-    function.CheckAccess(sSiteURL)
+    function.CheckAccess(sSiteURL) #Проверка доступности сайта
     UI.Interface(root) #Создаем объект класса Interface
-    root.mainloop() 
+    root.mainloop() #Инициализация UI
 
 if __name__ == '__main__':
     main()

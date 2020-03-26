@@ -22,7 +22,7 @@ class Interface(Frame):
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
                              'AppleWebKit/537.36 (KHTML, like Gecko) '
                              'Chrome/39.0.2171.95 Safari/537.36'}
-        
+        aClearResponse = []
         # Закрытие формы
         def closeForm():  
             sys.exit()  
@@ -51,9 +51,17 @@ class Interface(Frame):
                 aClearResponse.append(re.sub(r'[\]\[]','',aResponse[i])) 
                 TextResult.insert(1.0, re.sub(r'[\]\[]','',aClearResponse[i]) + '\n')
                 print(aClearResponse)
-  
-        
             
+  
+        def saveExcel():
+            aDirtResponse = []
+            val = function.createRequest(str(Keyword.get()),main.sSiteURL)
+            response = function.getPage(val,headers)
+            aResponse = re.split(r",\[",re.findall(r'\[\".*\d\]', response)[0])
+            for i in range(len(aResponse)):
+                aDirtResponse.append(re.sub(r'[\]\[]','',aResponse[i]))
+                aClearResponse.append(re.sub(r'[\]\[]','',aDirtResponse[i]))
+            print(aClearResponse)
 
         self.parent.title("Парсер")
         self.style = Style()
@@ -88,6 +96,9 @@ class Interface(Frame):
         TextResult.grid(row = 1, column = 2)
         Parse.grid(row = 1, column = 3)
         Close.grid(row = 2,column = 3 )
+        SaveExcel.grid(row = 0,column = 2)
+
+
         
         
 
