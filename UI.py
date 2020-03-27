@@ -51,9 +51,12 @@ class Interface(Frame):
                 aClearResponse.append(re.sub(r'[\]\[]','',aResponse[i])) 
                 TextResult.insert(1.0, re.sub(r'[\]\[]','',aClearResponse[i]) + '\n')
                 print(aClearResponse)
-            
+        
+        # # Задаем путь для сохранения файла
+        # def directory():   
   
         def saveExcel():
+            aClearResponse = []
             aDirtResponse = []
             val = function.createRequest(str(Keyword.get()),main.sSiteURL)
             response = function.getPage(val,headers)
@@ -61,6 +64,8 @@ class Interface(Frame):
             for i in range(len(aResponse)):
                 aDirtResponse.append(re.sub(r'[\]\[]','',aResponse[i]))
                 aClearResponse.append(re.sub(r'[\]\[]','',aDirtResponse[i]))
+            # вызов функции создания EXCEL
+            function.createEXCEL(aClearResponse)
             print(aClearResponse)
 
         self.parent.title("Парсер")
@@ -80,7 +85,7 @@ class Interface(Frame):
 
         
         # Объявляем все элементы:
-        KeywordLabel = Label(text="Введите имя:")
+        KeywordLabel = Label(text="Введите ключевое слово:")
         Keyword = Entry()
         Close = Button(text="Закрыть", command = closeForm)
         Parse = Button(text = 'Начать парсинг', command = getValueButton)
