@@ -8,6 +8,7 @@ from tkinter import Tk, Frame, BOTH
 from tkinter import filedialog as fd
 from ttk import Frame, Button, Style, Combobox
 import function
+import win32api
 # class Table():
 
 class Interface(Frame):
@@ -51,10 +52,7 @@ class Interface(Frame):
                 print("Сгенерированный HTTP запрос: " + val)
                 response = function.getPage(val,headers)
                 TextLog.insert(1.0,"Ответ " + response)
-                if DropDown.get() == 'Yandex':
-                    xPathResponseYandex(response)
-                else:
-                    xPathResponseGoogle(response)
+                xPathResponse(response)
 
         #Получаем результаты анализа от сервера
         def getDomainValue():
@@ -64,63 +62,51 @@ class Interface(Frame):
                 print("Сгенерированный HTTP запрос: " + val)
                 response = function.getPage(val,headers)
                 TextLog.insert(1.0,"Ответ " + response)
-                if DropDown.get() == 'Yandex':
-                    xPathResponseYandex(response)
-                else:
-                    xPathResponseGoogle(response)
-       
-        def xPathResponseGoogle(response):
-            print('Арбайтен')
+                xPathResponse(response)
 
-        def xPathResponseYandex(response):
+        def xPathResponse(response):
             #Разделяем полученную строку на список и убираем []
             aClearResponse = []
             aDirtResponse = []
-            aResponse = re.split(r",\[",re.findall(r'\[\".*\d\]', response)[0])
-            print(len(aResponse))
-            for i in range(len(aResponse)):
-                aDirtResponse.append(re.sub(r'[\]\[]','',aResponse[i]))
-                aClearResponse.append(re.sub(r'[\]\[]','',aDirtResponse[i])) 
-                TextResult.insert(1.0, re.sub(r'[\]\[]','',aClearResponse[i]) + '\n')
-                # print(aClearResponse)
+            try:
+                aResponse = re.split(r",\[",re.findall(r'\[\".*\d\]', response)[0])
+                print(len(aResponse))
+                for i in range(len(aResponse)):
+                    aDirtResponse.append(re.sub(r'[\]\[]','',aResponse[i]))
+                    aClearResponse.append(re.sub(r'[\]\[]','',aDirtResponse[i])) 
+                    TextResult.insert(1.0, re.sub(r'[\]\[]','',aClearResponse[i]) + '\n')
+                    # print(aClearResponse)
+            except Exception:
+                 win32api.MessageBox(0, 'Один из запросов ничего не вернул :(', 'Ошибка!')
+                 aClearResponse = 'Error'
             return aClearResponse
         # # Задаем путь для сохранения файла
         # def directory():   
-        def saveExcelParse():
+        def saveExcel(type):
             sFilePath = fd.asksaveasfilename(filetypes=( ("Excel files", "*.xls"),
                                                         ("All files", "*.*") ))
             #Проверяем на пустоту путь сохранения файлы и если не пусто, то выполняем сохранение
             if sFilePath != '':
                 aClearResponse = []
-                aDirtResponse = []
                 aAllKeyResponse =[]
-                sIntVal = re.split(r",", inputValue()[0])
+                #Проверка, откуда произошел вызов функции
+                if type == "Parse":
+                    sIntVal = re.split(r",", inputValue()[0])
+                else:
+                    sIntVal = re.split(r",", inputValue()[1])
+
                 for sInputValue in sIntVal: 
-                    val = function.createRequest(str(sInputValue),DropDown.get(),"Parse")
+                    val = function.createRequest(str(sInputValue),DropDown.get(),type)
                     response = function.getPage(val,headers)
-                    aClearResponse = xPathResponseYandex(response)
+                    aClearResponse = xPathResponse(response)
                     for i in aClearResponse:
                         aAllKeyResponse.append(i)
-                function.createEXCEL(aAllKeyResponse,sFilePath)
-                # print(aClearResponse)
+                if aClearResponse == 'Error':
+                    win32api.MessageBox(0, 'Не удалось сохранить все, что было указано в запросе!', 'Ошибка!')
+                    function.createEXCEL(aAllKeyResponse,sFilePath)
+                else:
+                    function.createEXCEL(aAllKeyResponse,sFilePath)
         
-        def saveExcelAnalys():
-            sFilePath = fd.asksaveasfilename(filetypes=( ("Excel files", "*.xls"),
-                                                        ("All files", "*.*") ))
-            #Проверяем на пустоту путь сохранения файлы и если не пусто, то выполняем сохранение
-            if sFilePath != '':
-                aClearResponse = []
-                aDirtResponse = []
-                val = function.createRequest(str(inputValue()[1]),DropDown.get(), "Analys")
-                #response = function.getPage(val,headers)
-                response = TextResult.get(1.0, END)
-                aResponse = re.split(r",\[",re.findall(r'\[\".*\d\]', response)[0])
-                for i in range(len(aResponse)):
-                    aDirtResponse.append(re.sub(r'[\]\[]','',aResponse[i]))
-                    aClearResponse.append(re.sub(r'[\]\[]','',aDirtResponse[i]))
-                # вызов функции создания EXCEL
-                function.createEXCEL(aClearResponse,sFilePath)
-                print(aClearResponse)
         #Получаем значение из выпадающег осписка
         # value = (listbox.get(listbox.curselection()))
 
@@ -150,13 +136,13 @@ class Interface(Frame):
         TextLog = Text(width=50, height=20)
         TextResult = Text(width=50, height=20)
         SaveValue = Button(text = "Сохранить параметры парсинга", command = inputValue )
-        SaveExcel = Button(text = 'Сохранить в EXCEL документ', command = saveExcelParse )
+        SaveExcel = Button(text = 'Сохранить в EXCEL документ', command = lambda: saveExcel ('Parse') )
         
         #Интерфейсные объекты для анализа
         DomainAnalysLabel = Label(text="Введите название домена для анализа:")
         DomainAnalys = Entry()
         Analys  = Button(text = 'Начать анализ', command = getDomainValue)
-        AnalysSave = Button(text = 'Сохранить в EXCEL документ результаты анализа', command = saveExcelAnalys )
+        AnalysSave = Button(text = 'Сохранить в EXCEL документ результаты анализа', command = lambda: saveExcel ('Analys') )
        
         # NameSpace
         DropDown['values'] = ('Yandex', 'Google')  
