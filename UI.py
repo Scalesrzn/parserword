@@ -52,7 +52,7 @@ class Interface(Frame):
                 print("Сгенерированный HTTP запрос: " + val)
                 response = function.getPage(val,headers)
                 TextLog.insert(1.0,"Ответ " + response)
-                xPathResponse(response)
+                xPathResponse(response,sInputValue)
 
         #Получаем результаты анализа от сервера
         def getDomainValue():
@@ -62,9 +62,9 @@ class Interface(Frame):
                 print("Сгенерированный HTTP запрос: " + val)
                 response = function.getPage(val,headers)
                 TextLog.insert(1.0,"Ответ " + response)
-                xPathResponse(response)
+                xPathResponse(response,sInputValue)
 
-        def xPathResponse(response):
+        def xPathResponse(response,keyword):
             #Разделяем полученную строку на список и убираем []
             aClearResponse = []
             aDirtResponse = []
@@ -77,7 +77,7 @@ class Interface(Frame):
                     TextResult.insert(1.0, re.sub(r'[\]\[]','',aClearResponse[i]) + '\n')
                     # print(aClearResponse)
             except Exception:
-                 win32api.MessageBox(0, 'Один из запросов ничего не вернул :(', 'Ошибка!')
+                 win32api.MessageBox(0, 'Запрос "%s" ничего не вернул :('%(keyword), 'Ошибка!')
                  aClearResponse = 'Error'
             return aClearResponse
         # # Задаем путь для сохранения файла
@@ -88,7 +88,8 @@ class Interface(Frame):
             #Проверяем на пустоту путь сохранения файлы и если не пусто, то выполняем сохранение
             if sFilePath != '':
                 aClearResponse = []
-                aAllKeyResponse =[]
+                aAllKeyResponse = []
+                sError = []
                 #Проверка, откуда произошел вызов функции
                 if type == "Parse":
                     sIntVal = re.split(r",", inputValue()[0])
@@ -98,11 +99,18 @@ class Interface(Frame):
                 for sInputValue in sIntVal: 
                     val = function.createRequest(str(sInputValue),DropDown.get(),type)
                     response = function.getPage(val,headers)
-                    aClearResponse = xPathResponse(response)
-                    for i in aClearResponse:
-                        aAllKeyResponse.append(i)
-                if aClearResponse == 'Error':
-                    win32api.MessageBox(0, 'Не удалось сохранить все, что было указано в запросе!', 'Ошибка!')
+                    aClearResponse = xPathResponse(response,sInputValue)
+                    if aClearResponse == 'Error':
+                        sError.append(sInputValue + " Error")
+                    else:
+                        for i in aClearResponse:
+                            aAllKeyResponse.append(i)
+                
+                ##Проверка на ошибки
+                if len(sError) == len(sIntVal):
+                    win32api.MessageBox(0, 'Ни один из запросов не дал результатов. Файл не будет сохранен', 'Ошибка!')
+                elif len(sError) > 1:   
+                    win32api.MessageBox(0, 'Не удалось сохранить все, что было указано в запросе! Скорее всего один из запросов не дал результатов', 'Ошибка!')
                     function.createEXCEL(aAllKeyResponse,sFilePath)
                 else:
                     function.createEXCEL(aAllKeyResponse,sFilePath)
